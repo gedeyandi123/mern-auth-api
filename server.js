@@ -10,8 +10,14 @@ const userRoutes = require('./routes/user')
 
 const app = express()
 
+let dbURL = process.env.DATABASE
+
+if (process.env.NODE_ENV === 'production') {
+  dbURL = process.env.MONGOLAB_URI
+}
+
 mongoose
-  .connect(process.env.DATABASE, {
+  .connect(dbURL, {
     useNewUrlParser: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
@@ -19,6 +25,10 @@ mongoose
   })
   .then(() => console.log('DB connected'))
   .catch(err => console.log('DB CONNECTION ERROR: ', err))
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
+}
 
 app.use(morgan('dev'))
 app.use(bodyParser.json())

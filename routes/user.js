@@ -2,11 +2,15 @@ const express = require('express')
 const router = express.Router()
 
 // import controller
-const { requireSignin, adminMiddleware } = require('../controllers/auth')
+const {
+  requireSignin,
+  mitraMiddleware,
+  clientMiddleware
+} = require('../controllers/auth')
 const { read, update } = require('../controllers/user')
 
 router.get('/user/:id', requireSignin, read)
-router.put('/user/update', requireSignin, update)
-router.put('/admin/update', requireSignin, adminMiddleware, update)
+router.put('/client/update', requireSignin, clientMiddleware, update)
+router.put('/mitra/update', requireSignin, mitraMiddleware, update)
 
 module.exports = router

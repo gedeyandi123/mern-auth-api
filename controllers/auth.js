@@ -125,7 +125,7 @@ exports.requireSignin = expressJwt({
   secret: process.env.JWT_SECRET // req.user._id
 })
 
-exports.adminMiddleware = (req, res, next) => {
+exports.clientMiddleware = (req, res, next) => {
   User.findById({ _id: req.user._id }).exec((err, user) => {
     if (err || !user) {
       return res.status(400).json({
@@ -133,9 +133,28 @@ exports.adminMiddleware = (req, res, next) => {
       })
     }
 
-    if (user.role !== 'admin') {
+    if (user.role !== 'client') {
       return res.status(400).json({
-        error: 'Admin resource. Access denied.'
+        error: 'Client resource. Access denied.'
+      })
+    }
+
+    req.profile = user
+    next()
+  })
+}
+
+exports.mitraMiddleware = (req, res, next) => {
+  User.findById({ _id: req.user._id }).exec((err, user) => {
+    if (err || !user) {
+      return res.status(400).json({
+        error: 'User not found'
+      })
+    }
+
+    if (user.role !== 'mitra') {
+      return res.status(400).json({
+        error: 'Mitra resource. Access denied.'
       })
     }
 
